@@ -22,32 +22,34 @@
           </tr>
         </thead>
         <tbody>
-          <?php
-            // Connect to database
-            include_once 'conn.php'; 
-            $ciphering = "AES-128-CTR";
-            $encryption_key = "crypto";
-            $options = 0;
-            // Retrieve data from database
-            $sql = "SELECT * FROM users";
-            $result = mysqli_query($conn, $sql);
-            // Loop through data and display in table
-            while ($row = mysqli_fetch_assoc($result))
-            {
-                $encryption_iv = hex2bin($row['IV']);
-                $username = openssl_decrypt($row['username'], $ciphering, $encryption_key, $options, $encryption_iv); 
-                //if you want to decrypt the password uncomment line below
-                //$password = openssl_decrypt($row['password'], $ciphering, $encryption_key, $options, $encryption_iv);
-                $company = openssl_decrypt($row['company'], $ciphering, $encryption_key, $options, $encryption_iv);
-                echo "<tr>";
-                echo "<td>" . $row['ID'] . "</td>";
-                echo "<td>" . $username . "</td>";
-                echo "<td>" . "********" . "</td>";
-                echo "<td>" . $company . "</td>";
-                echo "</tr>";
-            }
-            // Close database connection
-            mysqli_close($conn);
+        <?php
+              // Connect to database
+              include_once 'conn.php'; 
+              $ciphering = "AES-128-CTR";
+              $encryption_key = "crypto";
+              $options = 0;
+              // Retrieve data from database
+              $sql = "SELECT * FROM users";
+              $stmt = mysqli_prepare($conn, $sql);
+              mysqli_stmt_execute($stmt);
+              $result = mysqli_stmt_get_result($stmt);
+              // Loop through data and display in table
+              while ($row = mysqli_fetch_assoc($result)) {
+                  $encryption_iv = hex2bin($row['IV']);
+                  $username = openssl_decrypt($row['username'], $ciphering, $encryption_key, $options, $encryption_iv); 
+                  //if you want to decrypt the password uncomment line below
+                  //$password = openssl_decrypt($row['password'], $ciphering, $encryption_key, $options, $encryption_iv);
+                  $company = openssl_decrypt($row['company'], $ciphering, $encryption_key, $options, $encryption_iv);
+                  echo "<tr>";
+                  echo "<td>" . $row['ID'] . "</td>";
+                  echo "<td>" . $username . "</td>";
+                  echo "<td>" . "********" . "</td>";
+                  echo "<td>" . $company . "</td>";
+                  echo "</tr>";
+              }
+              // Close database connection
+              mysqli_stmt_close($stmt);
+              mysqli_close($conn);
           ?>
         </tbody>
       </table>

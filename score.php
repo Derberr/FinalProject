@@ -1,39 +1,48 @@
 <?php
-    //connect to the MySQL database
-    include_once 'conn2.php';
-    //initialize score variable
-    $score = 0;
-    //query to select all questions and correct answers from the database
-    $query = "SELECT * FROM answers";
-    $result = mysqli_query($conn, $query);
-    //loop through the questions
-    while ($answer = mysqli_fetch_assoc($result))
-     {
-        $qid = $answer['qid'];
-        //get the selected answer from the form
-        if (isset($_POST['question'.$qid]))
-         {
-            $selected_answer = $_POST['question'.$qid];
-        } else 
-        {
-            $selected_answer = 0;
-        }
-        $query1 = "SELECT option_id FROM app_options WHERE q_option = '$selected_answer'";
-        $result1 = mysqli_query($conn, $query1);
-        $row = mysqli_fetch_assoc($result1);
-        //compare selected answer to correct answer
-        if ($row !== null && $row['option_id'] == $answer['option_num'])
-        {
-            $select =$answer['option_num']; 
-            $query2 = "SELECT Points FROM answers WHERE option_num='$select'";
-            $result2 = mysqli_query($conn, $query2);
-            $row2 = mysqli_fetch_assoc($result2);
-            $score=$score+$row2['Points'];
-        }
-    }
-
-    //close the MySQL connection
-    mysqli_close($conn);
+    session_start();
+     //connect to the MySQL database
+     include_once 'conn2.php';
+     //initialize score variable
+     $score = 0;
+     //query to select all questions and correct answers from the database
+     $query = "SELECT * FROM answers";
+     $stmt = mysqli_prepare($conn, $query);
+     mysqli_stmt_execute($stmt);
+     $result = mysqli_stmt_get_result($stmt);
+     //loop through the questions
+     while ($answer = mysqli_fetch_assoc($result)) {
+         $qid = $answer['qid'];
+         //get the selected answer from the form
+         if (isset($_POST['question'.$qid])) {
+             $selected_answer = $_POST['question'.$qid];
+         } else {
+             $selected_answer = 0;
+         }
+         $query1 = "SELECT option_id FROM app_options WHERE q_option = ?";
+         $stmt1 = mysqli_prepare($conn, $query1);
+         mysqli_stmt_bind_param($stmt1, "s", $selected_answer);
+         mysqli_stmt_execute($stmt1);
+         $result1 = mysqli_stmt_get_result($stmt1);
+         $row = mysqli_fetch_assoc($result1);
+         //compare selected answer to correct answer
+         if ($row !== null && $row['option_id'] == $answer['option_num']) {
+             $select = $answer['option_num']; 
+             $query2 = "SELECT Points FROM answers WHERE option_num = ?";
+             $stmt2 = mysqli_prepare($conn, $query2);
+             mysqli_stmt_bind_param($stmt2, "i", $select);
+             mysqli_stmt_execute($stmt2);
+             $result2 = mysqli_stmt_get_result($stmt2);
+             $row2 = mysqli_fetch_assoc($result2);
+             $score = $score + $row2['Points'];
+         }
+     }
+     $susername = $_SESSION['username'];
+     $query2 = "INSERT into score (username,score) values (?,?)";
+     $stmt2 = mysqli_prepare($conn, $query2);
+     mysqli_stmt_bind_param($stmt2, "si", $susername,$score);
+     mysqli_stmt_execute($stmt2);
+     //close the MySQL connection
+     mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html>
