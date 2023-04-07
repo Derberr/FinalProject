@@ -1,5 +1,15 @@
 <?php
-    session_start();
+session_start();
+    if(isset($_SESSION["Active"]) && $_SESSION["Active"] === true) 
+    {
+        goto label;
+    } 
+    else 
+    {
+    // Kick back to login
+    header("location: login.html");
+    }
+    label:
      //connect to the MySQL database
      include_once 'conn2.php';
      //initialize score variable

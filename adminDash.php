@@ -1,3 +1,24 @@
+<?php
+session_start();
+if(isset($_SESSION["Active"]) && $_SESSION["Active"] === true)
+{
+  if(isset($_SESSION["Username"]) && $_SESSION["Username"] == "ADMIN")
+  {
+    goto label;
+  } 
+  else 
+  {
+    // Kick back to login
+    header("location: login.html");
+  }
+}
+else 
+  {
+    // Kick back to login
+    header("location: login.html");
+  }
+label:
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +26,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -21,7 +41,6 @@
     </ul>
   </div>
 </nav>
-
 <div class="container">
   <?php
     if(isset($_GET['q'])) 
@@ -43,6 +62,5 @@
     }
   ?>
 </div>
-
 </body>
 </html>

@@ -1,8 +1,22 @@
+<?php
+session_start();
+if(isset($_SESSION["Active"]) && $_SESSION["Active"] === true) 
+{
+  goto label;
+} 
+else 
+{
+  // Kick back to login
+  header("location: index.html");
+}
+label:
+?>
 <html>
 <head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script>
     $(document).ready(function() {
         //hide all questions except the first one
         $('.card').hide();
@@ -16,6 +30,7 @@
             $(this).closest('.card').hide();
         });
     });
+
 </script>
 <link rel="stylesheet" type="text/css" href="css/index.css" />
         <link rel="shortcut icon" type="image/png" href="image/logo.png" />
@@ -35,10 +50,10 @@
 <div class="intro">
 <h1>Please take the application below</h1>
 <h1 class ='bar'></h1>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quizModal">Take Quiz</button>
+<button type="button" id= "modal" class="btn btn-primary" data-toggle="modal" data-target="#quizModal">Take Application</button>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="quizModal" tabindex="-1" role="dialog" aria-labelledby="quizModalLabel" aria-hidden="true">
+<div id="quizModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="quizModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">

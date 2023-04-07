@@ -33,8 +33,20 @@
     }
     if($usernamecheck == true && $passwordcheck == true) 
     {
+        if($_POST['username'] == "ADMIN")
+        {
+            $_SESSION["Active"] = true;
+            $_SESSION["Username"] = "ADMIN";
+            echo "<script>location.href = 'adminDash.php';</script>";
+        }
+        else
+        {
+        $_SESSION["Active"] = true;
         echo "<script>location.href = 'quiz.php';</script>"; 
-    } else {
+       }
+    } 
+    else 
+    {
         echo "user doesn't exist";
     }
     mysqli_close($conn);
