@@ -14,6 +14,10 @@ session_start();
      include_once 'conn2.php';
      //initialize score variable
      $score = 0;
+     //initialize nocontrol variable
+     $nocontrol = 0;
+     //initialize noinsure variable
+     $noInsure = false;
      //query to select all questions and correct answers from the database
      $query = "SELECT * FROM answers";
      $stmt = mysqli_prepare($conn, $query);
@@ -44,7 +48,34 @@ session_start();
              $result2 = mysqli_stmt_get_result($stmt2);
              $row2 = mysqli_fetch_assoc($result2);
              $score = $score + $row2['Points'];
+             if($row2['Points'] <= 0)
+             {
+                $nocontrol++;
+
+             }
          }
+     }
+     if($nocontrol >= 8)
+     {
+         $noInsure = true;
+         // check for $noInsure here
+        if ($noInsure == true) 
+        {
+            echo "<style>
+            .noinsure
+            {   
+                width:100%;
+                padding-right:15px;
+                padding-left:15px;
+                margin-right:auto;
+                margin-left:auto;
+                position: absolute;
+                top: 60%;
+                transform: translateY(-50%);
+            }
+                </style>";
+            echo "<div class='noinsure' style='text-align: center;color: lightcoral;'><br><p><strong>You may not be able to obtain Insurance due to the lack of significant controls, please contact 01-5987564</strong></p></div>";
+        }
      }
      $susername = $_SESSION['username'];
      $query2 = "INSERT into score (username,score) values (?,?)";
@@ -58,18 +89,44 @@ session_start();
 <html>
 <head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    .navbar {
+      display: flex;
+      justify-content: center;
+      background-color: #000;
+    }
+
+    .navbar a {
+      color: #fff;
+      margin: 0 10px;
+    }
+  </style>
 </head>
-<body>
-<div style="text-align: center; padding-top: 30vh;">
+	
+<body class="bg-dark">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <h2 class="navbar-brand" style ="color :white">Application</h2>
+      </div>
+      <ul class="nav navbar-nav mx-auto"> <!-- Update the class to mx-auto for center alignment -->
+        <li><a href="logout.php">Logout</a></li> <!-- Update the class for right alignment if needed -->
+      </ul>
+    </div>
+  </nav>
+	
+<div style="text-align: center; padding-top: 30vh;color: white ;">
     <div class="container">
         <h1>Cyber Insurance Application Results</h1>
-        <p><br>You score reflects the number of controls in place or partially in place <?php echo $score;?></p>
+        <p><br><strong>Your score reflects the number of controls in place or partially in place: <br> <?php echo $score;?></strong></p>
         <?php if ($score < 100): ?>
-            <p><br>Due to lack of severe controls in place your premium may be substantially higher</p>
+            <p><strong>Due to lack of severe controls in place your premium may be substantially higher</strong></p>
         <?php elseif ($score > 100): ?>
-                <p>Your organisation has a good security posture which will reflect on your premium</p>   
+                <p><br><strong>Your organisation has a good security posture which will reflect on your premium</strong></p>   
         <?php endif; ?>
     </div>
-        </div>
+    </div>
+	
+	
 </body>
 </html>

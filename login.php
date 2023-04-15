@@ -42,7 +42,7 @@
         else
         {
         $_SESSION["Active"] = true;
-        echo "<script>location.href = 'quiz.php';</script>"; 
+        echo "<script>location.href = 'application.php';</script>"; 
        }
     } 
     else 
